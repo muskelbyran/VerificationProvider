@@ -44,7 +44,7 @@ public class GenerateVerificationCode(ILogger<GenerateVerificationCode> logger, 
                             {
                                 _logger.LogError($"SUCCESS : GenerateServiceBusEmailRequest :: {message}");
                                 _logger.LogError($"SUCCESS : GenerateServiceBusEmailRequest :: {payload}");
-
+                              
                                 await messageActions.CompleteMessageAsync(message);
                                 return payload;
                             }
