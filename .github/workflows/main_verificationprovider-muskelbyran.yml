@@ -39,4 +39,4 @@ jobs:
           app-name: 'verificationprovider-muskelbyran'
           slot-name: 'Production'
           package: '${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}/output'
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_3AF43A04227F4BFC8F19CA15328FEDE2 }}
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_74057367EDE7411A9573218DAA9E75F5 }}
