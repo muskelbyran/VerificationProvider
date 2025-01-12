@@ -12,12 +12,13 @@ var host = new HostBuilder()
     .ConfigureFunctionsWebApplication()
     .ConfigureAppConfiguration((context, config) =>
     {
-        // No Key Vault integration anymore, using App Settings directly
+        // No Key Vault integration anymore, using App Settings directly from Azure
     })
     .ConfigureServices((hostContext, services) =>
     {
         var configuration = hostContext.Configuration;
-      
+
+        // Fetch ServiceBusConnection from Azure App Settings
         var serviceBusConnection = configuration["ServiceBusConnection"];
         Console.WriteLine("Fetched ServiceBusConnection: " + serviceBusConnection);
         if (string.IsNullOrEmpty(serviceBusConnection))
@@ -30,9 +31,11 @@ var host = new HostBuilder()
         services.AddApplicationInsightsTelemetryWorkerService();
         services.ConfigureFunctionsApplicationInsights();
 
+        // Fetch SqlServer connection string from Azure App Settings
         var sqlServerConnectionString = configuration["SqlServer"];
-        services.AddDbContext<DataContext>(x => x.UseSqlServer(sqlServerConnectionString));
+        services.AddDbContext<DataContext>(options => options.UseSqlServer(sqlServerConnectionString));
 
+        // Register services
         services.AddScoped<IVerificationService, VerificationService>();
         services.AddScoped<IVerificationCleanerService, VerificationCleanerService>();
         services.AddScoped<IValidateVerificationCodeService, ValidateVerificationCodeService>();
@@ -56,4 +59,5 @@ using (var scope = host.Services.CreateScope())
     }
 }
 
+// Run the host
 host.Run();
