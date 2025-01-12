@@ -1,5 +1,7 @@
+using Azure.Identity;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System.Diagnostics;
@@ -9,11 +11,34 @@ using VerificationProvider.Services;
 
 var host = new HostBuilder()
     .ConfigureFunctionsWebApplication()
-    .ConfigureServices(services =>
+ .ConfigureAppConfiguration((context, config) =>
+ {
+     var keyVaultUri = Environment.GetEnvironmentVariable("VaultUri");
+     if (!string.IsNullOrEmpty(keyVaultUri))
+     {
+         config.AddAzureKeyVault(new Uri(keyVaultUri), new DefaultAzureCredential());
+     }
+ })
+    .ConfigureServices((hostContext, services) =>
     {
+        var configuration = hostContext.Configuration;
+      
+        var serviceBusConnection = configuration["ServiceBusConnection"];
+      //  Console.WriteLine($"ServiceBusConnection från Key Vault: {serviceBusConnection ?? "Ingen anslutningssträng hittades"}");
+
+        if (string.IsNullOrEmpty(serviceBusConnection))
+        {
+            throw new InvalidOperationException("ServiceBusConnection saknas i Key Vault eller konfiguration.");
+        }
+
+        Environment.SetEnvironmentVariable("ServiceBusConnection", serviceBusConnection);
+
         services.AddApplicationInsightsTelemetryWorkerService();
         services.ConfigureFunctionsApplicationInsights();
-        services.AddDbContext<DataContext>(x => x.UseSqlServer(Environment.GetEnvironmentVariable("SqlServer")));
+
+        var sqlServerConnectionString = configuration["SqlServer"];
+        services.AddDbContext<DataContext>(x => x.UseSqlServer(sqlServerConnectionString));
+
         services.AddScoped<IVerificationService, VerificationService>();
         services.AddScoped<IVerificationCleanerService, VerificationCleanerService>();
         services.AddScoped<IValidateVerificationCodeService, ValidateVerificationCodeService>();
@@ -29,7 +54,7 @@ using (var scope = host.Services.CreateScope())
         if (migration != null && migration.Any())
         {
             context.Database.Migrate();
-        }        
+        }
     }
     catch (Exception ex)
     {

@@ -5,10 +5,16 @@ using VerificationProvider.Interfaces;
 
 namespace VerificationProvider.Functions;
 
-public class GenerateVerificationCode(ILogger<GenerateVerificationCode> logger, IVerificationService verificationService)
+public class GenerateVerificationCode
 {
-    private readonly ILogger<GenerateVerificationCode> _logger = logger;
-    private readonly IVerificationService _verificationService = verificationService;
+    private readonly ILogger<GenerateVerificationCode> _logger;
+    private readonly IVerificationService _verificationService;
+
+    public GenerateVerificationCode(ILogger<GenerateVerificationCode> logger, IVerificationService verificationService)
+    {
+        _logger = logger;
+        _verificationService = verificationService;
+    }
 
     [Function(nameof(GenerateVerificationCode))]
     [ServiceBusOutput("email_request", Connection = "ServiceBusConnection")]
@@ -16,8 +22,8 @@ public class GenerateVerificationCode(ILogger<GenerateVerificationCode> logger, 
     {
         try
         {
-            _logger.LogError($"SUCCESS : GenerateVerificationCode :: {message}");
-
+            var serviceBusConnectionString = Environment.GetEnvironmentVariable("ServiceBusConnection");
+         
             var verificationRequest = _verificationService.UnpackVerificationRequest(message);
 
             if (verificationRequest != null)
@@ -44,7 +50,7 @@ public class GenerateVerificationCode(ILogger<GenerateVerificationCode> logger, 
                             {
                                 _logger.LogError($"SUCCESS : GenerateServiceBusEmailRequest :: {message}");
                                 _logger.LogError($"SUCCESS : GenerateServiceBusEmailRequest :: {payload}");
-                              
+
                                 await messageActions.CompleteMessageAsync(message);
                                 return payload;
                             }
