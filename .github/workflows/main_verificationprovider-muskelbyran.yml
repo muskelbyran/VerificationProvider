@@ -40,3 +40,6 @@ jobs:
           slot-name: 'Production'
           package: '${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}/output'
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_74057367EDE7411A9573218DAA9E75F5 }}
+        env:
+          ServiceBusConnection: ${{ secrets.SERVICE_BUS_CONNECTION }}
+          SqlServer: ${{ secrets.SQL_SERVER }}
