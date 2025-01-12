@@ -1,4 +1,3 @@
-using Azure.Identity;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -11,24 +10,19 @@ using VerificationProvider.Services;
 
 var host = new HostBuilder()
     .ConfigureFunctionsWebApplication()
- .ConfigureAppConfiguration((context, config) =>
- {
-     var keyVaultUri = Environment.GetEnvironmentVariable("VaultUri");
-     if (!string.IsNullOrEmpty(keyVaultUri))
-     {
-         config.AddAzureKeyVault(new Uri(keyVaultUri), new DefaultAzureCredential());
-     }
- })
+    .ConfigureAppConfiguration((context, config) =>
+    {
+        // No Key Vault integration anymore, using App Settings directly
+    })
     .ConfigureServices((hostContext, services) =>
     {
         var configuration = hostContext.Configuration;
       
         var serviceBusConnection = configuration["ServiceBusConnection"];
-      //  Console.WriteLine($"ServiceBusConnection från Key Vault: {serviceBusConnection ?? "Ingen anslutningssträng hittades"}");
-
+        Console.WriteLine("Fetched ServiceBusConnection: " + serviceBusConnection);
         if (string.IsNullOrEmpty(serviceBusConnection))
         {
-            throw new InvalidOperationException("ServiceBusConnection saknas i Key Vault eller konfiguration.");
+            throw new InvalidOperationException("ServiceBusConnection is missing in App Settings.");
         }
 
         Environment.SetEnvironmentVariable("ServiceBusConnection", serviceBusConnection);
