@@ -10,7 +10,7 @@ public class VerificationCleaner(ILogger<VerificationCleaner> logger, IVerificat
     private readonly IVerificationCleanerService _verificationCleanerService = verificationCleanerService;
 
     [Function("VerificationCleaner")]
-    public async Task Run([TimerTrigger("0 */1 * * * *")] TimerInfo myTimer)
+    public async Task Run([TimerTrigger("0 */5 * * * *")] TimerInfo myTimer)
     {
         try
         {
