@@ -85,40 +85,45 @@ public class VerificationService(ILogger<VerificationService> logger, IServicePr
         {
             if (!string.IsNullOrEmpty(verificationRequest.Email) && !string.IsNullOrEmpty(code))
             {
+                var confirmationUrl = $"https://muskelbyran.outoftheloop.se/confirmation?email={Uri.EscapeDataString(verificationRequest.Email)}";
+
                 var emailRequest = new EmailRequest()
                 {
                     To = verificationRequest.Email,
                     Subject = $"Verifikation Kod {code}",
                     HtmlBody = $@"			
-					<html lang='sv'>
-						<head>
-							<meta charset=""UTF-8"">
-							<meta name=""viewport"" content=""width=device-width, initial-scale=1.0"">
-							<title>Verifikation Kod</title> 
-						</head>
-						<body>
-							<div style='color: #191919; max-width: 500px'>
-								<div style='background-color: #4F85F6; color: white; text-align: center; padding: 20px 0;'>
-									<h1 style='font-weight: 400;'>Verifikation Kod</h1>
-								</div>
-								<div style='background-color: #f4f4f4; padding: 1rem 2rem;'>
-									<p>Välkommen som kund hos Muskelbyrån!</p>
-									<p>Du behöver bekräfta ditt konto och din e-post {verificationRequest.Email}. Verifiera ditt konto med denna kod:</p>
-									<p class='code' style='font-weight: 700; text-align: center; font-size: 48px; letter-spacing: 8px;'>
-										{code}
-									</p>
-									<div style='color: #191919; font-size: 11px;'>
-										<p>Om du inte bett om en kod eller registrerat ett konto hos Muskelbyrån så är det möjligt att någon försöker använda din e-post <span style='color: #0041cd;'>{verificationRequest.Email}.</span> Du kan inte svara på det här mailet. För mer information kontakta Muskelbyrån.</p> 
-									</div>
-								</div>
-								<div style='color: #191919; text-align: center; font-size: 11px;'>
-									<p>© Muskelbyrån, Borlänge</p>
-								</div>
-							</div>
-						</body>
-					</html>
-					",
-                    PlainText = $"Please verify your account using this verification code: {code}. If you did not request this code, it is possible that someone else is trying to access the Muskelbyrån account. This email can not receive replies. FOr more information, contact Muskelbyrån."
+<html lang='sv'>
+<head>
+    <meta charset=""UTF-8"">
+    <meta name=""viewport"" content=""width=device-width, initial-scale=1.0"">
+    <title>Verifikation Kod</title> 
+</head>
+<body>
+    <div style='color: #191919; max-width: 500px'>
+        <div style='background-color: #4F85F6; color: white; text-align: center; padding: 20px 0;'>
+            <h1 style='font-weight: 400;'>Verifikation Kod</h1>
+        </div>
+        <div style='background-color: #f4f4f4; padding: 1rem 2rem;'>
+            <p>Välkommen som kund hos Muskelbyrån!</p>
+            <p>Du behöver bekräfta ditt konto och din e-post {verificationRequest.Email}. Verifiera ditt konto med denna kod:</p>
+            <p class='code' style='font-weight: 700; text-align: center; font-size: 48px; letter-spacing: 8px;'>
+                {code}
+            </p>
+            <p style='text-align: center; font-size: 14px;'>
+                <a href='{confirmationUrl}' style='color: #0041cd;'>Klicka här för att bekräfta din e-postadress</a>
+            </p>
+            <div style='color: #191919; font-size: 11px;'>
+                <p>Om du inte bett om en kod eller registrerat ett konto hos Muskelbyrån så är det möjligt att någon försöker använda din e-post <span style='color: #0041cd;'>{verificationRequest.Email}</span>. Du kan inte svara på det här mailet. För mer information kontakta Muskelbyrån.</p> 
+            </div>
+        </div>
+        <div style='color: #191919; text-align: center; font-size: 11px;'>
+            <p>© Muskelbyrån, Borlänge</p>
+        </div>
+    </div>
+</body>
+</html>
+",
+                    PlainText = $"Please verify your account using this verification code: {code}. Or click this link: {confirmationUrl}. If you did not request this code, someone else might be trying to register. Contact Muskelbyrån for support."
                 };
 
                 return emailRequest;
@@ -131,6 +136,7 @@ public class VerificationService(ILogger<VerificationService> logger, IServicePr
 
         return null!;
     }
+
 
     public string GenerateServiceBusEmailRequest(EmailRequest emailRequest)
     {
