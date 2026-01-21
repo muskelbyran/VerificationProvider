@@ -85,7 +85,7 @@ public class VerificationService(ILogger<VerificationService> logger, IServicePr
         {
             if (!string.IsNullOrEmpty(verificationRequest.Email) && !string.IsNullOrEmpty(code))
             {
-                var confirmationUrl = $"https://muskelbyran.outoftheloop.se/confirmation?email={Uri.EscapeDataString(verificationRequest.Email)}";
+                var confirmationUrl = $"https://muskelbyran.se/confirmation?email={Uri.EscapeDataString(verificationRequest.Email)}";
 
                 var emailRequest = new EmailRequest()
                 {
