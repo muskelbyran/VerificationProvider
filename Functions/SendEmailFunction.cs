@@ -18,7 +18,7 @@ public class SendEmailFunction
         _emailSenderService = emailSenderService;
     }
 
-    [Function("SendEmailFunction")]
+    //[Function("SendEmailFunction")]
     public async Task Run([ServiceBusTrigger("email_request", Connection = "ServiceBusConnection")] ServiceBusReceivedMessage message, ServiceBusMessageActions messageActions)
     {
         try
@@ -30,9 +30,8 @@ public class SendEmailFunction
             if (emailRequest == null)
             {
                 _logger.LogError("Invalid email request payload");
-                //await messageActions.DeadLetterMessageAsync(message, "InvalidPayload", "Could not deserialize EmailRequest");
-                    await messageActions.AbandonMessageAsync(message);
-                    return;
+await messageActions.DeadLetterMessageAsync(message, "InvalidPayload", "Could not deserialize EmailRequest");
+                return;
             }
 
             var success = await _emailSenderService.SendEmailAsync(emailRequest);
