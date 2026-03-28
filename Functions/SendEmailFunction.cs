@@ -27,10 +27,17 @@ public class SendEmailFunction
             _logger.LogInformation("SendEmailFunction received payload: {Payload}", payload);
 
             var emailRequest = JsonConvert.DeserializeObject<EmailRequest>(payload);
+            //            if (emailRequest == null)
+            //            {
+            //                _logger.LogError("Invalid email request payload");
+            //await messageActions.DeadLetterMessageAsync(message, "InvalidPayload", "Could not deserialize EmailRequest");
+            //                return;
+            //            }
+
             if (emailRequest == null)
             {
                 _logger.LogError("Invalid email request payload");
-await messageActions.DeadLetterMessageAsync(message, "InvalidPayload", "Could not deserialize EmailRequest");
+                await messageActions.AbandonMessageAsync(message);
                 return;
             }
 
