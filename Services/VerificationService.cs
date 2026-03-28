@@ -85,7 +85,8 @@ public class VerificationService(ILogger<VerificationService> logger, IServicePr
         {
             if (!string.IsNullOrEmpty(verificationRequest.Email) && !string.IsNullOrEmpty(code))
             {
-                var confirmationUrl = $"https://muskelbyran.se/confirmation?email={Uri.EscapeDataString(verificationRequest.Email)}";
+                //var confirmationUrl = $"https://muskelbyran.se/confirmation?email={Uri.EscapeDataString(verificationRequest.Email)}";
+                var confirmationUrl = $"{verificationRequest.BaseUrl}/confirmation?email={Uri.EscapeDataString(verificationRequest.Email)}";
 
                 var emailRequest = new EmailRequest()
                 {
@@ -113,17 +114,14 @@ public class VerificationService(ILogger<VerificationService> logger, IServicePr
                 <a href='{confirmationUrl}' style='color: #0041cd;'>Klicka här för att bekräfta din e-postadress</a>
             </p>
             <div style='color: #191919; font-size: 11px;'>
-                <p>Om du inte bett om en kod eller registrerat ett konto hos {verificationRequest.AppName} så är det möjligt att någon försöker använda din e-post <span style='color: #0041cd;'>{verificationRequest.Email}</span>. Du kan inte svara på det här mailet. För mer information kontakta Muskelbyrån.</p> 
+              <p>Om du inte bett om en kod eller registrerat ett konto hos {verificationRequest.AppName} så är det möjligt att någon försöker använda din e-post <span style='color: #0041cd;'>{verificationRequest.Email}</span>. Du kan inte svara på det här mailet. För mer information kontakta {verificationRequest.AppName}.</p>
             </div>
         </div>
-        //<div style='color: #191919; text-align: center; font-size: 11px;'>
-        //    <p>© Muskelbyrån, Borlänge</p>
-        //</div>
     </div>
 </body>
 </html>
 ",
-                    PlainText = $"Please verify your account using this verification code: {code}. Or click this link: {confirmationUrl}. If you did not request this code, someone else might be trying to register. Contact Muskelbyrån for support."
+                    PlainText = $"Please verify your account using this verification code: {code}. Or click this link: {confirmationUrl}. If you did not request this code, someone else might be trying to register. Contact {verificationRequest.AppName} for support."
                 };
 
                 return emailRequest;

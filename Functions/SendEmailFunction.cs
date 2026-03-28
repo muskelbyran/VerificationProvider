@@ -30,7 +30,11 @@ public class SendEmailFunction
             if (emailRequest == null)
             {
                 _logger.LogError("Invalid email request payload");
-                await messageActions.DeadLetterMessageAsync(message, "InvalidPayload", "Could not deserialize EmailRequest");
+                await messageActions.DeadLetterMessageAsync(message, new Dictionary<string, object>
+                {
+                    { "DeadLetterReason", "InvalidPayload" },
+                    { "DeadLetterErrorDescription", "Could not deserialize EmailRequest" }
+                });
                 return;
             }
 
