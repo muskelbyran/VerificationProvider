@@ -17,6 +17,8 @@ var host = new HostBuilder()
         services.AddScoped<IVerificationService, VerificationService>();
         services.AddScoped<IVerificationCleanerService, VerificationCleanerService>();
         services.AddScoped<IValidateVerificationCodeService, ValidateVerificationCodeService>();
+        // Email sender service (used by SendEmailFunction)
+        services.AddSingleton<VerificationProvider.Services.EmailSenderService>();
     })
     .Build();
 

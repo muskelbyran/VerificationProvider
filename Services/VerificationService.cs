@@ -104,7 +104,7 @@ public class VerificationService(ILogger<VerificationService> logger, IServicePr
             <h1 style='font-weight: 400;'>Verifikation Kod</h1>
         </div>
         <div style='background-color: #f4f4f4; padding: 1rem 2rem;'>
-            <p>Välkommen som kund hos Muskelbyrån!</p>
+            <p>Välkommen till {verificationRequest.AppName}!</p>
             <p>Du behöver bekräfta ditt konto och din e-post {verificationRequest.Email}. Verifiera ditt konto med denna kod:</p>
             <p class='code' style='font-weight: 700; text-align: center; font-size: 48px; letter-spacing: 8px;'>
                 {code}
@@ -113,12 +113,12 @@ public class VerificationService(ILogger<VerificationService> logger, IServicePr
                 <a href='{confirmationUrl}' style='color: #0041cd;'>Klicka här för att bekräfta din e-postadress</a>
             </p>
             <div style='color: #191919; font-size: 11px;'>
-                <p>Om du inte bett om en kod eller registrerat ett konto hos Muskelbyrån så är det möjligt att någon försöker använda din e-post <span style='color: #0041cd;'>{verificationRequest.Email}</span>. Du kan inte svara på det här mailet. För mer information kontakta Muskelbyrån.</p> 
+                <p>Om du inte bett om en kod eller registrerat ett konto hos {verificationRequest.AppName} så är det möjligt att någon försöker använda din e-post <span style='color: #0041cd;'>{verificationRequest.Email}</span>. Du kan inte svara på det här mailet. För mer information kontakta Muskelbyrån.</p> 
             </div>
         </div>
-        <div style='color: #191919; text-align: center; font-size: 11px;'>
-            <p>© Muskelbyrån, Borlänge</p>
-        </div>
+        //<div style='color: #191919; text-align: center; font-size: 11px;'>
+        //    <p>© Muskelbyrån, Borlänge</p>
+        //</div>
     </div>
 </body>
 </html>
